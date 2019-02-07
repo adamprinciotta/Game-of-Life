@@ -12,6 +12,8 @@ public:
 	void set(unsigned row, unsigned col, Organism status);	
 	void initialBoard();
 	void makeBoard();
+	void updateBoard(int countGen, GameBoard Gboard);
+	void checkNeigbors(GameBoard Gboard);
 
 
 private:

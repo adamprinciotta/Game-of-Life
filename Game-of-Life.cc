@@ -60,6 +60,90 @@ void GameBoard::makeBoard(){
 	cout << endl;
 }
 
+void GameBoard::checkNeigbors(GameBoard Gboard){
+	int neighbors = 0;
+	for(int i = 1; i < totalRows - 1; i++){
+		for(int j = 1; j < totalCols - 1; j++){
+			if(board_[i-1][j-1] == Organism::LIVING || board_[i-1][j-1] == Organism::DYING)
+				neighbors++;
+
+			if(board_[i][j-1] == Organism::LIVING || board_[i][j-1] == Organism::DYING)
+				neighbors++;
+			
+			if(board_[i+1][j-1] == Organism::LIVING || board_[i+1][j-1] == Organism::DYING)
+				neighbors++;
+			
+			if(board_[i-1][j] == Organism::LIVING || board_[i-1][j] == Organism::DYING)
+				neighbors++;
+			
+			if(board_[i-1][j+1] == Organism::LIVING || board_[i-1][j+1] == Organism::DYING)
+				neighbors++;
+			
+			if(board_[i+1][j] == Organism::LIVING || board_[i+1][j] == Organism::DYING)
+				neighbors++;
+
+			if(board_[i][j+1] == Organism::LIVING || board_[i][j+1] == Organism::DYING)
+				neighbors++;
+			
+			if(board_[i+1][j+1] == Organism::LIVING || board_[i+1][j+1] == Organism::DYING)
+				neighbors++;
+
+			if ((neighbors < 2 || neighbors > 3) && board_[i][j] == Organism::LIVING)
+				Gboard.set(i, j, Organism::DYING);
+			
+			//else if ((neighbors == 2 || neighbors == 3) && board_[i][j] == Organism::NONE)
+				//Gboard.set(i, j, Organism::GESTATING);
+				
+			cout << neighbors;
+			neighbors = 0;
+			
+		}
+			
+	}			
+		
+}
+
+void GameBoard::updateBoard(int countGen, GameBoard Gboard){
+	cout << ESC << "[H" << "Generation " << countGen << ":" << endl;
+
+	for(int i = 0; i < totalRows - 1; i++){
+		for(int j = 0; j < totalCols - 1; j++){
+			if(board_[i][j] == Organism::GESTATING)
+				Gboard.set(i, j, Organism::LIVING);
+	
+			else if (board_[i][j] == Organism::DYING)
+				Gboard.set(i, j, Organism::NONE);
+		}
+	
+	}
+
+	for(int x = 0; x < totalCols; x++){
+			if(x == 0 || x == totalCols - 1)
+				cout << "+";
+			else	
+				cout << "-";
+		}
+					 
+		for(int i = 1; i < totalRows - 1; i++){
+			cout << "\n|";
+			for(int j = 1; j < totalCols - 1; j++){
+				if(board_[i][j] == Organism::LIVING || board_[i][j] == Organism::GESTATING)
+					cout << "*";
+				else
+					cout << " ";
+			}
+			cout << "|";
+		} 
+		cout << endl;
+		for(int x = 0; x < totalCols; x++){
+			if(x == 0 || x == totalCols - 1)
+				cout << "+";
+			else	
+				cout << "-";
+		}
+		cout << endl;
+		
+}
 
 int main(){
 	
@@ -68,6 +152,7 @@ int main(){
 
 	int initOrg;
 	int generations;
+	int countGen = 1;
 	int x;
 	int y;
 
@@ -81,7 +166,6 @@ int main(){
 		cin >> x >> y;
 		cout << x << " " << y << endl;
 		Gboard.set(x + 1, y + 1, Organism::LIVING);
-
 	}
 	
 	cout << "Generations?: ";
@@ -89,9 +173,19 @@ int main(){
 	cout << endl;
 
 	Gboard.makeBoard();
-	//make updateBoard
+	
+	
+
+	while(countGen < generations){
+		cout << ESC << "[23;1H" << ESC << "[K" << "Press RETURN to continue";
+		while (cin.get() != '\n') {            
+			//intentionally empty loop body
+	 	}	
+		Gboard.checkNeigbors(Gboard);
+		Gboard.updateBoard(countGen, Gboard);
+		countGen++;
+	} 
 	//check neighbors
 
 return 0;
-
 }
